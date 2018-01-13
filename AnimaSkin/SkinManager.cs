@@ -85,7 +85,7 @@ public class SkinManager : MonoBehaviour {
     /// <summary>
     /// Restores the initial skin (beginning of the scene) on the character
     /// </summary>
-    private void RestoreBaseSkin()
+    public void RestoreBaseSkin()
     {
         if (defSkin.skinParts.Count != 0)
         {
