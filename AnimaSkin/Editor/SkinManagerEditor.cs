@@ -10,14 +10,16 @@ using Anima2D;
 public class SkinManagerEditor : Editor {
 
     private ReorderableList list;
+    private ReorderableList currSkinList;
 
     private void OnEnable()
     {
         //Create the list
         list = new ReorderableList(serializedObject,
             serializedObject.FindProperty("skins"),
-            true, true, true, true);
+            true, true, false, false);
 
+        
         list.drawHeaderCallback = (Rect rect) => {
             EditorGUI.LabelField(rect, "Skins");
         };
@@ -33,17 +35,26 @@ public class SkinManagerEditor : Editor {
                 GUIContent.none);
         };
 
-        
-        
     }
 
 
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
+        //Change Current Skin
+
+        SkinManager myTarget = (SkinManager)target;
+
+        if (myTarget.currentSkin != null)
+        {
+            EditorGUILayout.LabelField("Current Skin Name", myTarget.CurrentSkinName);
+        }
+        
+
         //Update changes
         serializedObject.Update();
         list.DoLayoutList();
         serializedObject.ApplyModifiedProperties();
     }
+    
 }

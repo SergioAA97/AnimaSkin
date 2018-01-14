@@ -6,15 +6,26 @@ using Anima2D;
 public class SkinManager : MonoBehaviour {
 
     [HideInInspector]
-    public List<Skin> skins = new List<Skin>();
+    public List<Skin> skins = new List<Skin>(); //List of skins detected
+
     [HideInInspector]
-    public Skin defSkin;
-    public GameObject skinHolder;
+    public Skin defSkin;        //Default character skin created at start of scene
+    //[HideInInspector]
+    //[SerializeField]
+    public Skin currentSkin;    //Current loaded skin
+
+    public string CurrentSkinName
+    {
+        get { return currentSkin.skinName; }
+    }
+
+    public GameObject skinHolder;   //Skin holder GameObject
 
     private void OnEnable()
     {
         RefreshSkins();
         GetDefSkin();
+        SetSkin(defSkin);
     }
 
     /// <summary>
@@ -26,19 +37,15 @@ public class SkinManager : MonoBehaviour {
 
         Skin[] currSkins;
         List<string> skinNames = new List<string>();
-
+        
         //If reference for holder
         if (skinHolder != null)
         {
-             currSkins = skinHolder.GetComponentsInChildren<Skin>();
-        }
-        else
-        {
-            currSkins = GetComponents<Skin>();
+            currSkins = skinHolder.GetComponentsInChildren<Skin>();
+        }else{
+            currSkins = GetComponentsInChildren<Skin>();
         }
 
-        //Get reference to the other skins in the character
-        
         //Add to list
         if (currSkins.Length == 0)
         {
@@ -68,8 +75,8 @@ public class SkinManager : MonoBehaviour {
     private void GetDefSkin()
     {
         //Init
-        defSkin = new Skin();
-        defSkin.skinName = "initBase";
+        defSkin = gameObject.AddComponent<Skin>();
+        defSkin.skinName = "_default";
         defSkin.skinParts = new List<SkinPart>();
 
         SpriteMeshInstance[] instances = GetComponentsInChildren<SpriteMeshInstance>();
@@ -89,6 +96,7 @@ public class SkinManager : MonoBehaviour {
     {
         if (defSkin.skinParts.Count != 0)
         {
+            /*
             foreach(var part in defSkin.skinParts)
             {
                 if (part.spriteMesh != null && part.bodyPart != null)
@@ -96,33 +104,92 @@ public class SkinManager : MonoBehaviour {
                     part.bodyPart.spriteMesh = part.spriteMesh;
                 }
             }
+            */
+            SetSkin(defSkin);
         }
     }
 
     /// <summary>
     /// Loads the skin with the name passed to the function.   	
     /// </summary>
-    public void LoadSkin(string skinName)
-    {
-        //Error check
-        if (string.IsNullOrEmpty(skinName)) return;
+    public void LoadSkinByString(string skinName)
+    {     
 
         //Get index of skin in list
         int index = SearchSkin(skinName);
 
         if (index != -1)
         {
+            //Set the skin
+            SetSkin(skins[index]);
+        }
+        else
+        {
+            Debug.LogError("ERROR: The skin with name " + skinName + " could not be found in " + gameObject.name);
+        }
+    }
 
-            List<SkinPart> skinParts = skins[index].skinParts;
+    /// <summary>
+    /// Loads the skin passed to the function.   	
+    /// </summary>
+    public void LoadSkin(Skin skinToSet)
+    {
+       
+        //Set the skin
+        SetSkin(skinToSet);
+        
+    }
 
-            //Loop through all parts and assign them
-            for (int i = 0; i < skinParts.Count; i++)
+    /// <summary>
+    /// Error check the skin	
+    /// </summary>
+    bool IsValidSkin(Skin skin)
+    {
+        //Empty name
+        if (string.IsNullOrEmpty(skin.skinName))
+        {
+            Debug.LogError("ERROR: The skin is not valid, the name is empty");
+            return false;
+        }
+
+        //Empty skin part list
+        if (skin.skinParts.Count == 0)
+        {
+            Debug.LogError("ERROR: The skin is not valid, it has no body parts!");
+            return false;
+        }
+
+        //Check every part in the skin
+        foreach(SkinPart part in skin.skinParts)
+        {
+            if (part.bodyPart == null)
             {
-                if(skinParts[i].bodyPart != null)
-                {
-                    //Assign
-                    skinParts[i].bodyPart.spriteMesh = skinParts[i].spriteMesh;
-                }
+                Debug.LogError("ERROR: The skin " + skin.skinName + " is not valid, a body part has a null reference");
+                return false;
+            }
+        }
+
+        //No issues found
+        return true;
+    }
+
+    void SetSkin(Skin skinToSet)
+    {
+        List<SkinPart> skinParts = skinToSet.skinParts;
+
+        //Error check
+        if (!IsValidSkin(skinToSet)) return;
+
+        //Set current skin
+        currentSkin = skinToSet;
+
+        //Loop through all parts and assign them
+        for (int i = 0; i < skinParts.Count; i++)
+        {
+            if (skinParts[i].bodyPart != null)
+            {
+                //Assign
+                skinParts[i].bodyPart.spriteMesh = skinParts[i].spriteMesh;
             }
         }
     }
