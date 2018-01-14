@@ -14,7 +14,7 @@ Anima Skin has 2 simple scripts to use:
 
 ## The Skin Manager
 
-The skin manager can be added to the root GameObject of the character. The manager has two visible variables:
+The skin manager can be added to the root GameObject of the character. The manager has three visible variables:
 
 - __Current Skin:__ A copy of the currently set *Skin*.
 - __Skin Holder:__ Drag the *GameObject* that contains the "Skin" scripts. If you don't have / want one, leave it empty and the manager will try to find them.
@@ -24,6 +24,7 @@ The skin manager can be added to the root GameObject of the character. The manag
 The following variables are public in the *Skin Manager* script instance:
 
 - __skins__: The list of the current *Skins*.
+- __currentSkin:__ A copy of the currently set *Skin*.
 - __defSkin__: The default *Skin* the character had when the scene started.
 - __skinHolder__: The *GameObject* that contains the skins ( this is the field in the Editor we saw earlier ).
 #### The Functions
