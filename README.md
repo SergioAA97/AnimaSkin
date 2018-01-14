@@ -16,6 +16,7 @@ Anima Skin has 2 simple scripts to use:
 
 The skin manager can be added to the root GameObject of the character. The manager has two visible variables:
 
+- __Current Skin:__ A copy of the currently set *Skin*.
 - __Skin Holder:__ Drag the *GameObject* that contains the "Skin" scripts. If you don't have / want one, leave it empty and the manager will try to find them.
 - __Skins:__ Is a list that will show the *Skins* identified by the manager in the object that you dragged above.
 #### The Variables
@@ -30,7 +31,8 @@ The following variables are public in the *Skin Manager* script instance:
 The *Skin Manager* has the following __public__ functions (At the moment):
 - __RefreshSkins()__ : Refreshes the skins in the *GameObject*.
 - __RestoreBaseSkin()__: Restores the character to the skin that it had when the scene started.
-- __LoadSkin(*string* skinName)__: Loads the skin with the name passed as a parameter. It will let you know if it couldn't find it. For better debugging, check the *Skins* list in the manager at runtime!
+- __LoadSkinByString(*string* skinName)__: Loads the skin with the name passed as a parameter. It will let you know if it couldn't find it. For better debugging, check the *Skins* list in the manager at runtime!
+- __LoadSkin(*Skin* skinToSet)__: Loads the skin passed as a parameter. You can use this to create *Skins* at runetime and set them to the character. Wow!
 - __SearchSkin(*string* skinName)__: Searches the skin, with the name passed as a parameter, and returns the index of it in the *skins* list in the *Skin Manager*, it will return " -1 " if it can't find it.
 
 ## The Skin Component
