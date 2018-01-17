@@ -8,6 +8,8 @@ public class SkinManager : MonoBehaviour {
     [HideInInspector]
     public List<Skin> skins = new List<Skin>(); //List of skins detected
 
+    public string defatulSkinName = "_default";
+
     [HideInInspector]
     public Skin defSkin;        //Default character skin created at start of scene
     //[HideInInspector]
@@ -76,9 +78,13 @@ public class SkinManager : MonoBehaviour {
     {
         //Init
         defSkin = gameObject.AddComponent<Skin>();
-        defSkin.skinName = "_default";
+        //Set name
+        defSkin.skinName = (string.IsNullOrEmpty(defatulSkinName)) ? defatulSkinName : "_default";
+        //Create parts list
         defSkin.skinParts = new List<SkinPart>();
 
+        //Get all instances of Sprite Mesh
+        //  -- NOTE :  This can be changed so that it goes to a public variable, in case only certain body parts want to be stored
         SpriteMeshInstance[] instances = GetComponentsInChildren<SpriteMeshInstance>();
 
         foreach (var instance in instances)
@@ -88,6 +94,9 @@ public class SkinManager : MonoBehaviour {
             newpart.spriteMesh = instance.spriteMesh;
             defSkin.skinParts.Add(newpart);
         }
+
+        //Add the default skin to the list
+        skins.Add(defSkin);
     }
     /// <summary>
     /// Restores the initial skin (beginning of the scene) on the character
